@@ -5,7 +5,7 @@ package life.majiang.community.model;
  * @date 2020/11/14 11:26
  */
 public class User {
-    private Integer id;
+    private Long id;
     private String name;
     private String accountId;
     private String token;
@@ -24,7 +24,7 @@ public class User {
                 '}';
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,7 +48,7 @@ public class User {
         this.gmtModified = gmtModified;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

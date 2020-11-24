@@ -31,7 +31,7 @@
 
             <id>dev</id>
             <properties>
-                <db.url>jdbc:h2:~/community_xin</db.url>
+                <db.url>jdbc:h2:D:/java_project/community_xin/src/main/java/dataset/community_xin</db.url>
                 <db.user>sa</db.user>
                 <db.password>123</db.password>
             </properties>
