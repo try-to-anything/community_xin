@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Mapper
 public interface QuestionMapper {
     /***
-     * 插入问题的命令
+     * 插入问题的命令，这里需要时接口命令
      * @param question
      */
     @Insert("insert into question (title,description,gmt_create," +
