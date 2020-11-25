@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper
 public interface QuestionMapper {
+    /***
+     * 插入问题的命令
+     * @param question
+     */
     @Insert("insert into question (title,description,gmt_create," +
             "gmt_modified,creator,tag) values (#{title}," +
             "#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
