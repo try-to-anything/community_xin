@@ -52,10 +52,9 @@ public class AuthorizeContoller {
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             System.out.println(user.toString());
+            user.setAvatarUrl(githubUser.getAvator_url());
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
-
-
             request.getSession().setAttribute("user",githubUser);//这里将user设置了一个session，统计在线人数？
             //设置session，将user的属性放到session里面，然后对这个session使用数据。
             return "redirect:/";

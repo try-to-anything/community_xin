@@ -15,9 +15,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper
 public interface UserMapper {
-    @Insert("insert into user (account_id,name,token,gmt_create,gmt_modified) values(#{accountId},#{name},#{token},#{gmtCreate},#{gmtModified})")
+    @Insert("insert into user (account_id,name,token,gmt_create,gmt_modified,avatar_url) values(#{accountId},#{name},#{token},#{gmtCreate},#{gmtModified},#{avatarUrl})")
     void insert(User user);
 
     @Select("select * from user where token = #{token}")
     User findByToken(@Param("token") String token);//这里是返回一个user的变量
+
+    @Select("select * from user where id = #{id}")
+    User findById(@Param("id") Integer id);//这里是返回一个user的变量
+
 }

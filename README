@@ -1,1 +1,15 @@
 作为第一个部署上线的项目，将来可以测试在阿里云上面使用
+
+#### flyway
+* mvn flyway:migrate
+* 文件命名必须是V开头，加上__两条横线
+* 删除某个命令之类的，发生xception: Validate failed: Migration checksum mismatch for migration version 4
+* 只需要去flyway_schema_history删除这个命令行就可以了
+
+
+#### idea 快捷方式
+* 两次shift 可以根据文件名查找文件
+* Ctrl + Tab 可以查找最近几次文件名
+* shift + F6 可以复制变量名和更改这个全部的变量名
+* alt + ins 可以快速构建set和get，结构体等函数。
+* shift + ctrl + alt + ？ 可以打开register，更改idea的配置文件。
