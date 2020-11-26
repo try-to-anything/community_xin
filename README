@@ -5,6 +5,9 @@
 * 文件命名必须是V开头，加上__两条横线
 * 删除某个命令之类的，发生xception: Validate failed: Migration checksum mismatch for migration version 4
 * 只需要去flyway_schema_history删除这个命令行就可以了
+* 热部署，使用devtools依赖
+* 自动部署，如果我们是在静态页面或者thymeleaf文件下进行了修改,那么我们只需要按ctrl+F9即可,然后在页面刷新就可生效 如果我们是在java文件中修改,同样也是按ctrl+F9也可生效
+* 分页查询也可以使用pageHelp，这个以后改一下
 
 
 #### idea 快捷方式
@@ -12,4 +15,5 @@
 * Ctrl + Tab 可以查找最近几次文件名
 * shift + F6 可以复制变量名和更改这个全部的变量名
 * alt + ins 可以快速构建set和get，结构体等函数。
-* shift + ctrl + alt + ？ 可以打开register，更改idea的配置文件。
+* shift + ctrl + alt + ？ 可以打开register，更改idea的配置文件。找到里面compile.automake.allow.when.app.running 可以改变后端代码就可以完成更新前端，但对计算机性能有一定的要求
+*

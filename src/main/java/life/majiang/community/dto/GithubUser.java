@@ -13,7 +13,7 @@ public class GithubUser {
     private String name;
     private Long id;
     private String bio;
-    private String avator_url;
+    private String avatar_url;
 
 //    public void setName(String name) {
 //        this.name = name;

@@ -60,7 +60,7 @@
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 发起</h2>
             <hr>
 
-            <div class="media" th:each="question : ${questions}">
+            <div class="media" th:each="question : ${pageination.questions}">
                 <div class="media-left">
                     <a href="#">
                         <img class="media-object img-rounded"
@@ -69,13 +69,33 @@
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading" th:title="${question.title}"> </h4>
-                    <span th:text="${question.description}"></span>> <br>
+                    <span th:text="${question.description}"></span> <br>
                     <span class="text-desc"><span th:text="${question.commentCount}"></span> 个回复 • <span
                             th:text="${question.viewCount}"></span> 次浏览 • <span
                             th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span></span>
                 </div>
-
             </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:if="${pageination.showPrevious}">
+                        <a href="#" aria-label="Previous">
+                            <span aria-hidden="true"> &laquo; </span>
+                        </a>
+                    </li>
+
+                    <li th:each="page : ${pageination.pages}" th:class="${pageination.page == page}? 'active' : '' ">
+                        <a th:href="@{/(page=${page})}" th:text="${page}" >
+
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" >

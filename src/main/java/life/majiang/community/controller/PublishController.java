@@ -91,7 +91,7 @@ public class PublishController {
         question.setGmtCreate(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreate());
         questionMapper.crete(question);
-        System.out.println(question);
+//        System.out.println(question);  这会在前端显示的
         return "redirect:/";
     }
 }

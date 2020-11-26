@@ -1,5 +1,6 @@
 package life.majiang.community.service;
 
+import life.majiang.community.dto.PageinationDTO;
 import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
@@ -25,8 +26,18 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<QuestionDTO> list() {
-        List<Question> questions = questionMapper.list();
+    public PageinationDTO list(Integer page,Integer size) {
+
+        PageinationDTO pageinationDTO = new PageinationDTO();
+        Integer count = questionMapper.count();
+        if(page < 1){
+            page=1;
+        }
+
+        pageinationDTO.setPagination(count,page,size);//这是得到pages，还有一些初始值的
+        Integer offset = size * (page -1);
+
+        List<Question> questions = questionMapper.list(offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.findById(question.getCreator());
@@ -35,7 +46,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-
-        return questionDTOList;
+        pageinationDTO.setQuestions(questionDTOList);
+        return pageinationDTO;
     }
 }

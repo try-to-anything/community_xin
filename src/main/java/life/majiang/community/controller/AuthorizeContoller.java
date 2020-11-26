@@ -52,7 +52,7 @@ public class AuthorizeContoller {
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             System.out.println(user.toString());
-            user.setAvatarUrl(githubUser.getAvator_url());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
             request.getSession().setAttribute("user",githubUser);//这里将user设置了一个session，统计在线人数？
