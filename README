@@ -19,3 +19,4 @@
 * shift + ctrl + alt + ？ 可以打开register，更改idea的配置文件。找到里面compile.automake.allow.when.app.running 可以改变后端代码就可以完成更新前端，但对计算机性能有一定的要求
 * ctrl + shift + F12 界面放到最大
 * ctrl + w 选取代码中左右闭合最大的区域
+* ctrl + shift 可以将代码上下替换
