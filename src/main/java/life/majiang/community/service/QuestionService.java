@@ -49,4 +49,27 @@ public class QuestionService {
         pageinationDTO.setQuestions(questionDTOList);
         return pageinationDTO;
     }
+
+    public PageinationDTO list(Integer userId, Integer page, Integer size) {
+        PageinationDTO pageinationDTO = new PageinationDTO();
+        Integer count = questionMapper.countByUserId(userId);
+        if(page < 1){
+            page=1;
+        }
+
+        pageinationDTO.setPagination(count,page,size);//这是得到pages，还有一些初始值的
+        Integer offset = size * (page -1);
+
+        List<Question> questions = questionMapper.listByUserID(userId,offset,size);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        for (Question question : questions) {
+            User user = userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        pageinationDTO.setQuestions(questionDTOList);
+        return pageinationDTO;
+    }
 }
