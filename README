@@ -20,3 +20,5 @@
 * ctrl + shift + F12 界面放到最大
 * ctrl + w 选取代码中左右闭合最大的区域
 * ctrl + shift 可以将代码上下替换
+* ctrl + F12 可以选择这个类的所有方法
+* ctrl + alt + v 快速生成函数返回接受值。

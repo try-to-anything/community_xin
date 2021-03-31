@@ -25,10 +25,8 @@ public class QuestionController {
     @GetMapping("/question/{id}")
     public String question(@PathVariable(name="id") Integer id
     , Model model){
-
-
         QuestionDTO questionDTO = questionService.getById(id);
         model.addAttribute("question",questionDTO);
-        return "question";
+        return "question";//保证样式不变，每次返回的都是question页面。
     }
 }
