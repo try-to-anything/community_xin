@@ -2,6 +2,9 @@ package life.majiang.community.service;
 
 import life.majiang.community.dto.PageinationDTO;
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.exception.CustomizeErrorCode;
+import life.majiang.community.exception.CustomizeException;
+import life.majiang.community.mapper.QuestionExtMapper;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.Question;
@@ -28,6 +31,9 @@ public class QuestionService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     public PageinationDTO list(Integer page,Integer size) {
 
@@ -85,6 +91,10 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if(question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            //如果表里查不到相应的question，要抛出这个异常才可以。
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.selectByPrimaryKey(questionDTO.getCreator());
@@ -100,6 +110,16 @@ public class QuestionService {
 //            questionMapper.crete(question);
         }else{
 //            question.setGmtModified(System.currentTimeMillis());
+            Question dbquestion = questionMapper.selectByPrimaryKey(question.getId());
+            if(dbquestion == null){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+                //更新之前应该也看看是否可以更新才可以。
+            }
+            if(dbquestion.getCreator().intValue() != question.getCreator().intValue()){
+                throw new CustomizeException(CustomizeErrorCode.INVALID_OPERATION);
+                //更新时候发现，两者的标签有变化。创始人的id应该创建Long的类型才对。
+            }
+
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria()
                     .andIdEqualTo(question.getId());
@@ -114,5 +134,12 @@ public class QuestionService {
 //            question.setGmtModified(System.currentTimeMillis());  这个一会试试
 //            questionMapper.update(question);
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();//这个是读取出question，然后修改一部分数据
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }

@@ -1,6 +1,7 @@
 package life.majiang.community.controller;
 
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.mapper.QuestionExtMapper;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.model.Question;
 import life.majiang.community.service.QuestionService;
@@ -26,6 +27,8 @@ public class QuestionController {
     public String question(@PathVariable(name="id") Integer id
     , Model model){
         QuestionDTO questionDTO = questionService.getById(id);
+        questionDTO.setId((long)id);
+        questionService.incView(id);
         model.addAttribute("question",questionDTO);
         return "question";//保证样式不变，每次返回的都是question页面。
     }
