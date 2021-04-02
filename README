@@ -1,5 +1,14 @@
 作为第一个部署上线的项目，将来可以测试在阿里云上面使用
 
+#### git
+git add .
+git commit -m "名字"
+git push
+
+#### mybaits 启动
+mvn -Dmybatis.generator.overwrite=true  mybatis-generator:generate
+
+
 #### flyway
 * mvn flyway:migrate
 * 文件命名必须是V开头，加上__两条横线
@@ -22,3 +31,6 @@
 * ctrl + shift 可以将代码上下替换
 * ctrl + F12 可以选择这个类的所有方法
 * ctrl + alt + v 快速生成函数返回接受值。
+* ctrl + alt + enter 向上插入空行
+
+* shift+enter 向下插入空行
