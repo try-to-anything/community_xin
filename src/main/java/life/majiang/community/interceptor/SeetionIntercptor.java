@@ -36,6 +36,8 @@ public class SeetionIntercptor implements HandlerInterceptor {
 //                    User user = userMapper.findByToken(token);
                     if(users.size() != 0){
                         request.getSession().setAttribute("user",users.get(0));
+//                        System.out.println(request.getSession().getAttribute("user"));
+
                     }
                     break;
                 }

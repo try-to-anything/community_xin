@@ -34,3 +34,5 @@ mvn -Dmybatis.generator.overwrite=true  mybatis-generator:generate
 * ctrl + alt + enter 向上插入空行
 
 * shift+enter 向下插入空行
+
+* 前端 debugger 谷歌浏览器的 source可以查看源码

@@ -29,9 +29,6 @@ public class AuthorizeContoller {
     private GithubProvider githubProvider;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
     private UserService userService;
 
     @GetMapping("/callback")
@@ -57,7 +54,7 @@ public class AuthorizeContoller {
             user.setAvatarUrl(githubUser.getAvatar_url());
             userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",token));
-            request.getSession().setAttribute("user",githubUser);//这里将user设置了一个session，统计在线人数？
+//            request.getSession().setAttribute("user",githubUser);//这里将user设置了一个session，统计在线人数？
             //设置session，将user的属性放到session里面，然后对这个session使用数据。
             return "redirect:/";
         }else{
@@ -67,7 +64,8 @@ public class AuthorizeContoller {
 
     @GetMapping("/logout")
     public String Logout(HttpServletRequest request,HttpServletResponse response){
-        request.getSession().removeAttribute("user");
+//        System.out.println(request.getSession().getAttribute("user"));
+        request.getSession().removeAttribute("user");//有点bug，好像是没有给request输入
         Cookie cookie = new Cookie("token",null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);

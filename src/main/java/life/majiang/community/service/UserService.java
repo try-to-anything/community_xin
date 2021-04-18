@@ -24,7 +24,7 @@ public class UserService {
         List<User> users = userMapper.selectByExample(userExample);
 //        User dbUser = userMapper.findByAccountId(user.getAccountId());
         if(users.size()==0){
-            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtCreate(System.currentTimeMillis());//这个设置是创建时间？
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);//如果以后更改了这个部分，怎么修改user的内容？传的是user这个类型吧
             //插入
@@ -33,15 +33,13 @@ public class UserService {
             User dbUser = users.get(0);
 
             User updateUser = new User();
-
             updateUser.setGmtModified(System.currentTimeMillis());
             updateUser.setAvatarUrl(user.getAvatarUrl());
             updateUser.setName(user.getName());
             updateUser.setToken(user.getToken());
             UserExample example = new UserExample();
             example.createCriteria().andIdEqualTo(dbUser.getId());
-            userMapper.updateByExample(updateUser,example);
-//            userMapper.update(dbUser);
+            userMapper.updateByExampleSelective(updateUser,example);
         }
     }
 }
