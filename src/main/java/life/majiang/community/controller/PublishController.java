@@ -1,5 +1,6 @@
 package life.majiang.community.controller;
 
+import life.majiang.community.cache.TagCache;
 import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.mapper.QuestionMapper;
 import life.majiang.community.model.Question;
@@ -35,13 +36,15 @@ public class PublishController {
         model.addAttribute("description",question.getDescription());
         model.addAttribute("tag",question.getTag());
         model.addAttribute("id",question.getId());
+        model.addAttribute("tags", TagCache.get());
 
         return "publish";
     }
 
 
     @GetMapping("/publish")
-    public String publish(){
+    public String publish(Model model){
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
@@ -56,6 +59,7 @@ public class PublishController {
         model.addAttribute("title", title);
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
+        model.addAttribute("tags", TagCache.get());
 
         if (StringUtils.isBlank(title)) {
             model.addAttribute("error", "标题不能为空");
@@ -65,12 +69,19 @@ public class PublishController {
             model.addAttribute("error", "问题补充不能为空");
             return "publish";
         }
+
         if (StringUtils.isBlank(tag)) {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
 
-        //        String invalid = TagCache.filterInvalid(tag);
+        String invalid = TagCache.filterInvalid(tag);
+        if(StringUtils.isNotBlank(invalid)){
+            model.addAttribute("error","输入非法标签:" + invalid);
+            return "publish";
+        }
+
+        //        String invalid = TagCache.invalid(tag);
 //        if (StringUtils.isNotBlank(invalid)) {
 //            model.addAttribute("error", "输入非法标签:" + invalid);
 //            return "publish";

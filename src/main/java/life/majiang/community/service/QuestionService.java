@@ -10,13 +10,17 @@ import life.majiang.community.mapper.UserMapper;
 import life.majiang.community.model.Question;
 import life.majiang.community.model.QuestionExample;
 import life.majiang.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author songjian
@@ -34,26 +38,28 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PageinationDTO list(Integer page,Integer size) {
+    public PageinationDTO list(Integer page, Integer size) {
 
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer count = (int)questionMapper.countByExample(new QuestionExample());
+        Integer count = (int) questionMapper.countByExample(new QuestionExample());
 //        Integer count = questionMapper.count();
-        if(page < 1){
-            page=1;
+        if (page < 1) {
+            page = 1;
         }
 
-        pageinationDTO.setPagination(count,page,size);//这是得到pages，还有一些初始值的
-        Integer offset = size * (page -1);
+        pageinationDTO.setPagination(count, page, size);//这是得到pages，还有一些初始值的
+        Integer offset = size * (page - 1);
 
-//        List<Question> questions = questionMapper.list(offset,size);
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
+
+        QuestionExample example = new QuestionExample();
+        example.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setId((long)question.getId());
+            BeanUtils.copyProperties(question, questionDTO);
+            questionDTO.setId((long) question.getId());
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
@@ -66,21 +72,21 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria()
                 .andCreatorEqualTo(userId);
-        Integer count = (int)questionMapper.countByExample(questionExample);
+        Integer count = (int) questionMapper.countByExample(questionExample);
 //        Integer count = questionMapper.countByUserId(userId);
-        if(page < 1){
-            page=1;
+        if (page < 1) {
+            page = 1;
         }
 
-        pageinationDTO.setPagination(count,page,size);//这是得到pages，还有一些初始值的
-        Integer offset = size * (page -1);
+        pageinationDTO.setPagination(count, page, size);//这是得到pages，还有一些初始值的
+        Integer offset = size * (page - 1);
         List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
 //        List<Question> questions = questionMapper.listByUserID(userId,offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question,questionDTO);
+            BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
@@ -90,19 +96,19 @@ public class QuestionService {
 
     public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question == null){
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             //如果表里查不到相应的question，要抛出这个异常才可以。
         }
         QuestionDTO questionDTO = new QuestionDTO();
-        BeanUtils.copyProperties(question,questionDTO);
+        BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(questionDTO.getCreator());
         questionDTO.setUser(user);
         return questionDTO;
     }
 
     public void CreateOrUpdate(Question question) {
-        if(question.getId() == null){
+        if (question.getId() == null) {
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             question.setViewCount(0);
@@ -110,14 +116,14 @@ public class QuestionService {
             question.setCommentCount(0);
             questionMapper.insert(question);
 //            questionMapper.crete(question);
-        }else{
+        } else {
 //            question.setGmtModified(System.currentTimeMillis());
             Question dbquestion = questionMapper.selectByPrimaryKey(question.getId());
-            if(dbquestion == null){
+            if (dbquestion == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
                 //更新之前应该也看看是否可以更新才可以。
             }
-            if(dbquestion.getCreator().intValue() != question.getCreator().intValue()){
+            if (dbquestion.getCreator().intValue() != question.getCreator().intValue()) {
                 throw new CustomizeException(CustomizeErrorCode.INVALID_OPERATION);
                 //更新时候发现，两者的标签有变化。创始人的id应该创建Long的类型才对。
             }
@@ -131,7 +137,7 @@ public class QuestionService {
             updateQuestion.setDescription(question.getDescription());
             updateQuestion.setTag(question.getTag());
 
-            questionMapper.updateByExampleSelective(updateQuestion,questionExample);
+            questionMapper.updateByExampleSelective(updateQuestion, questionExample);
             //第一个参数是需要更新的内容，第二个是查找的条件
 //            question.setGmtModified(System.currentTimeMillis());  这个一会试试
 //            questionMapper.update(question);
@@ -143,5 +149,25 @@ public class QuestionService {
         question.setId(id);
         question.setViewCount(1);
         questionExtMapper.incView(question);
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO questionDTO) {
+        if (StringUtils.isBlank(questionDTO.getTag())) {
+            return new ArrayList<>();
+        }
+        String[] tags = StringUtils.split(questionDTO.getTag(), ",");
+        String regexTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(regexTag);
+
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO questionDTO1 = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO1);//将question转化为questionDTO
+            return questionDTO1;
+        }).collect(Collectors.toList());
+
+        return questionDTOS ;
     }
 }

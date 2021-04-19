@@ -2,8 +2,7 @@ package life.majiang.community.controller;
 
 import life.majiang.community.dto.CommentDTO;
 import life.majiang.community.dto.QuestionDTO;
-import life.majiang.community.mapper.QuestionExtMapper;
-import life.majiang.community.mapper.QuestionMapper;
+import life.majiang.community.enums.CommentTypeEnum;
 import life.majiang.community.model.Question;
 import life.majiang.community.service.CommentService;
 import life.majiang.community.service.QuestionService;
@@ -13,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.jws.WebParam.Mode;
 import java.util.List;
 
 /**
@@ -33,13 +31,13 @@ public class QuestionController {
     public String question(@PathVariable(name="id") Long id
     , Model model){
         QuestionDTO questionDTO = questionService.getById(id);
-
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
-
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
         questionDTO.setId(id);
         questionService.incView(id);
         model.addAttribute("question",questionDTO);
         model.addAttribute("comments",comments);
+        model.addAttribute("relatedQuestions",relatedQuestions);
         return "question";//保证样式不变，每次返回的都是question页面。
     }
 }

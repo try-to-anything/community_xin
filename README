@@ -4,6 +4,8 @@
 git add .
 git commit -m "名字"
 git push
+* 某一个文件恢复成前一个git的文件，右键，git，找到revert，可以选择版本
+
 
 #### mybaits 启动
 mvn -Dmybatis.generator.overwrite=true  mybatis-generator:generate
@@ -32,7 +34,8 @@ mvn -Dmybatis.generator.overwrite=true  mybatis-generator:generate
 * ctrl + F12 可以选择这个类的所有方法
 * ctrl + alt + v 快速生成函数返回接受值。
 * ctrl + alt + enter 向上插入空行
-
+* ctrl + alt + p 将当前变量作为函数的形参，并且改变利用该函数的所有变量。
+* Ctrl + Alt + L 格式化代码
 * shift+enter 向下插入空行
 
 * 前端 debugger 谷歌浏览器的 source可以查看源码
