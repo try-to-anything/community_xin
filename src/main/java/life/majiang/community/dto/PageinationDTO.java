@@ -11,8 +11,8 @@ import java.util.List;
  * @date 2020/11/26 10:51
  */
 @Data
-public class PageinationDTO {
-    private List<QuestionDTO> questions;
+public class PageinationDTO<T> {
+    private List<T> data;
     private boolean showPrevious;
     private boolean showFirstPage;
     private boolean showNext;
@@ -22,16 +22,11 @@ public class PageinationDTO {
     private Integer totalPage;
 //    private
 
-    public void setPagination(Integer totalCount, Integer page, Integer size) {
-        if(totalCount %size == 0){
-            totalPage = totalCount/size;
-        }else{
-            totalPage = totalCount/size +1;
-        }
-
+    public void setPagination(Integer totalPage, Integer page) {
+        this.totalPage = totalPage;
+        this.page = page;
 
         pages.add(page);
-
         for (int i = 1; i <= 3; i++) {
             if(page -i >0){
                 pages.add(0,page-i);
@@ -48,7 +43,7 @@ public class PageinationDTO {
         }
 
         //是否展示下一页
-        if(page == totalPage){
+        if(page.equals(totalPage)){
             showNext = false;
         }else {
             showNext = true;

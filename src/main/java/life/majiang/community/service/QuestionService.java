@@ -39,15 +39,28 @@ public class QuestionService {
     private QuestionExtMapper questionExtMapper;
 
     public PageinationDTO list(Integer page, Integer size) {
-
+        Integer totalPage;
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer count = (int) questionMapper.countByExample(new QuestionExample());
+        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
 //        Integer count = questionMapper.count();
         if (page < 1) {
             page = 1;
         }
 
-        pageinationDTO.setPagination(count, page, size);//这是得到pages，还有一些初始值的
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        pageinationDTO.setPagination(totalPage, page);//这是得到pages，还有一些初始值的
         Integer offset = size * (page - 1);
 
 
@@ -63,7 +76,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        pageinationDTO.setQuestions(questionDTOList);
+        pageinationDTO.setData(questionDTOList);
         return pageinationDTO;
     }
 
@@ -72,15 +85,32 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria()
                 .andCreatorEqualTo(userId);
-        Integer count = (int) questionMapper.countByExample(questionExample);
+        Integer totalCount = (int) questionMapper.countByExample(questionExample);
+        Integer totalPage;
 //        Integer count = questionMapper.countByUserId(userId);
         if (page < 1) {
             page = 1;
         }
 
-        pageinationDTO.setPagination(count, page, size);//这是得到pages，还有一些初始值的
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        pageinationDTO.setPagination(totalPage, page);//这是得到pages，还有一些初始值的
         Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionExample.setOrderByClause("gmt_create desc");
+//        example.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample
+                ,new RowBounds(offset, size));
 //        List<Question> questions = questionMapper.listByUserID(userId,offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question : questions) {
@@ -90,7 +120,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        pageinationDTO.setQuestions(questionDTOList);
+        pageinationDTO.setData(questionDTOList);
         return pageinationDTO;
     }
 
