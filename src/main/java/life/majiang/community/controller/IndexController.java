@@ -33,11 +33,14 @@ public class IndexController {
     public String index(HttpServletRequest request,
                         Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,
-                        @RequestParam(name = "size",defaultValue = "5") Integer size){
-
-        PageinationDTO pageination = questionSerVice.list(page,size);
+                        @RequestParam(name = "size",defaultValue = "5") Integer size,
+                        @RequestParam(name = "search", required = false) String search){
+//        PageinationDTO pageination = questionSerVice.serchList(page,size,search);
+        PageinationDTO pageination = questionSerVice.list(page,size,search);
 
         model.addAttribute("pageination",pageination);
+        model.addAttribute("search",search);
+
         return "index";
     }
 }

@@ -11,8 +11,6 @@ function post() {
     comment2target(questionId, 1, content);
 }
 
-
-//这是提交问题的评论信息，第一个是问题id，第二个是，类型，第三个是内容
 function comment2target(targetId, type, content) {
     if (!content) {
         alert("不能回复空内容~~~");
@@ -47,7 +45,6 @@ function comment2target(targetId, type, content) {
     });
 }
 
-//这是查看二级评论信息，并且也可以提交评论信息
 function comment(e) {
     var commentId = e.getAttribute("data-id");
     var content = $("#input-" + commentId).val();
@@ -135,20 +132,3 @@ function selectTag(e) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

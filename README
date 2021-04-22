@@ -36,6 +36,9 @@ mvn -Dmybatis.generator.overwrite=true  mybatis-generator:generate
 * ctrl + alt + enter 向上插入空行
 * ctrl + alt + p 将当前变量作为函数的形参，并且改变利用该函数的所有变量。
 * Ctrl + Alt + L 格式化代码
-* shift+enter 向下插入空行
+* shift + enter 向下插入空行
+* alt + F7 查看当前函数的依赖函数
 
 * 前端 debugger 谷歌浏览器的 source可以查看源码
+
+*改进方法，搜索使用ElasticSearch

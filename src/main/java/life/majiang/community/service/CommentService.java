@@ -63,7 +63,7 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
-
+            comment.setCommentCount(0);//设置初始化评论总数
             commentMapper.insert(comment);
 
             //增加计算二级评论的数目。

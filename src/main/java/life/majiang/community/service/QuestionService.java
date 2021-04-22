@@ -2,6 +2,7 @@ package life.majiang.community.service;
 
 import life.majiang.community.dto.PageinationDTO;
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.dto.QuestionQueryDTO;
 import life.majiang.community.exception.CustomizeErrorCode;
 import life.majiang.community.exception.CustomizeException;
 import life.majiang.community.mapper.QuestionExtMapper;
@@ -38,11 +39,35 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PageinationDTO list(Integer page, Integer size) {
+    /***
+     * 返回一个搜索后的问题标题结果
+     * @param page
+     * @param size
+     * @param search
+     * @return
+     */
+    public PageinationDTO list(Integer page, Integer size,String search) {
+
+        // 将search分片
+        if(StringUtils.isNotBlank(search)){
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays
+                    .stream(tags)
+                    .filter(StringUtils::isNotBlank)
+                    .map(t -> t.replace("+", "").replace("*", "").replace("?", ""))
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.joining("|"));
+        }
+
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+
+
         Integer totalPage;
         PageinationDTO pageinationDTO = new PageinationDTO();
-        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
-//        Integer count = questionMapper.count();
+
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
+
         if (page < 1) {
             page = 1;
         }
@@ -60,26 +85,81 @@ public class QuestionService {
             page = totalPage;
         }
 
-        pageinationDTO.setPagination(totalPage, page);//这是得到pages，还有一些初始值的
-        Integer offset = size * (page - 1);
-
-
-        QuestionExample example = new QuestionExample();
-        example.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
+        pageinationDTO.setPagination(totalPage, page);
+        Integer offset = page < 1 ? 0 : size * (page - 1);
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setPage(offset);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
+
         for (Question question : questions) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setId((long) question.getId());
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
+
         pageinationDTO.setData(questionDTOList);
         return pageinationDTO;
     }
 
+
+//    /***
+//     *
+//     * @param page
+//     * @param size
+//     * @return 返回一个主页面的所有最新提问的问题
+//     */
+//    public PageinationDTO list(Integer page, Integer size) {
+//        Integer totalPage;
+//        PageinationDTO pageinationDTO = new PageinationDTO();
+//        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+////        Integer count = questionMapper.count();
+//        if (page < 1) {
+//            page = 1;
+//        }
+//
+//        if (totalCount % size == 0) {
+//            totalPage = totalCount / size;
+//        } else {
+//            totalPage = totalCount / size + 1;
+//        }
+//
+//        if (page < 1) {
+//            page = 1;
+//        }
+//        if (page > totalPage) {
+//            page = totalPage;
+//        }
+//
+//        pageinationDTO.setPagination(totalPage, page);//这是得到pages，还有一些初始值的
+//        Integer offset = size * (page - 1);
+//
+//
+//        QuestionExample example = new QuestionExample();
+//        example.setOrderByClause("gmt_create desc");
+//        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
+//        List<QuestionDTO> questionDTOList = new ArrayList<>();
+//        for (Question question : questions) {
+//            User user = userMapper.selectByPrimaryKey(question.getCreator());
+//            QuestionDTO questionDTO = new QuestionDTO();
+//            BeanUtils.copyProperties(question, questionDTO);
+//            questionDTO.setId((long) question.getId());
+//            questionDTO.setUser(user);
+//            questionDTOList.add(questionDTO);
+//        }
+//        pageinationDTO.setData(questionDTOList);
+//        return pageinationDTO;
+//    }
+
+    /***
+     *
+     * @param userId
+     * @param page
+     * @param size
+     * @return 返回userId的所有问题。作用于，用户本身的询问问题
+     */
     public PageinationDTO list(Long userId, Integer page, Integer size) {
         PageinationDTO pageinationDTO = new PageinationDTO();
         QuestionExample questionExample = new QuestionExample();
